@@ -1,6 +1,6 @@
 # go_oauth2_demo
 
-inde.html 点下button后会请求auth server 进行授权, 也就是尝试获取用户信息。客户端携带client_id, response_type, scope, redirect_uri 请求第三方登录中心的 authorization server 授权
+index.html 点下button后会请求auth server 进行授权, 也就是尝试获取用户信息。客户端携带client_id, response_type, scope, redirect_uri 请求第三方登录中心的 authorization server 授权
 
 login.html 按button后,发现没有登陆状态, 则会跳转的 login.html页面。让用户输入用户名和密码,  然后将请求发送到/oauth2/login,请求登录
 
