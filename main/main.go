@@ -1,12 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+	"oauth_demo/config"
 	"oauth_demo/server"
+	"time"
 )
 
 func main() {
+
+	startTime := time.Now()
+
 	server.Init()
 
 	// auth_server 授权入口
@@ -31,12 +35,12 @@ func main() {
 
 	errChan := make(chan error)
 	go func() {
-		fmt.Println("server start")
+		config.Info("server start", "duration", time.Now().Sub(startTime))
 		errChan <- http.ListenAndServe(":9000", nil)
 	}()
 	err := <-errChan
 	if err != nil {
-		fmt.Println("Hello server stop running.")
+		config.Error("server stop")
 	}
 
 }

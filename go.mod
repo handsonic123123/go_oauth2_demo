@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/go-oauth2/oauth2/v4 v4.5.2
 	github.com/go-session/session v3.1.2+incompatible
+	go.uber.org/zap v1.24.0
 )
 
 require (
@@ -18,4 +19,6 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tidwall/rtree v0.0.0-20180113144539-6cd427091e0e // indirect
 	github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 )

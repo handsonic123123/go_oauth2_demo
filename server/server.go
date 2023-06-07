@@ -10,8 +10,8 @@ import (
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/go-session/session"
-	"log"
 	"net/http"
+	"oauth_demo/config"
 	"os"
 	"time"
 )
@@ -40,7 +40,7 @@ func Init() {
 
 	//校验 redirect_uri 和 client 的 Domain, 简单起见, 不做校验
 	//manager.SetValidateURIHandler(func(baseURI, redirectURI string) error {
-	//	fmt.Println(baseURI, redirectURI)
+	//	config.Info("ValidateURI", "baseURI", baseURI, "redirectURI", redirectURI)
 	//	return nil
 	//})
 
@@ -56,7 +56,7 @@ func Init() {
 	srv.SetClientInfoHandler(func(r *http.Request) (clientID, clientSecret string, err error) {
 		client_info, err := srv.Manager.GetClient(r.Context(), r.URL.Query().Get("client_id")) //r.URL.Query().Get("client_id")
 		if err != nil {
-			log.Println(err)
+			config.Info("get client error", "err", err)
 			return "", "", err
 		}
 		return client_info.GetID(), client_info.GetSecret(), nil
@@ -93,7 +93,7 @@ func Init() {
 func AuthorizeHandler(w http.ResponseWriter, r *http.Request) {
 	err := srv.HandleAuthorizeRequest(w, r)
 	if err != nil {
-		log.Println(err)
+		config.Info("authorize fail", "error", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
@@ -102,7 +102,7 @@ func AuthorizeHandler(w http.ResponseWriter, r *http.Request) {
 func userAuthorizationHandler(w http.ResponseWriter, r *http.Request) (user_id string, err error) {
 	store, err := session.Start(r.Context(), w, r)
 	if err != nil {
-		log.Println(err)
+		config.Info("userAuthorization fail", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -126,7 +126,7 @@ func userAuthorizationHandler(w http.ResponseWriter, r *http.Request) (user_id s
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	store, err := session.Start(r.Context(), w, r)
 	if err != nil {
-		log.Println(err)
+		config.Info("session start fail", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -136,7 +136,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		user_id, err := srv.PasswordAuthorizationHandler(r.Context(), "demo", r.Form.Get("username"), r.Form.Get("password"))
 		if err != nil {
-			log.Println(err)
+			config.Info("password authorization fail", "error", err)
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
@@ -157,7 +157,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func AgreeAuthHandler(w http.ResponseWriter, r *http.Request) {
 	store, err := session.Start(r.Context(), w, r)
 	if err != nil {
-		log.Println(err)
+		config.Info("agree auth fail", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -177,7 +177,7 @@ func AgreeAuthHandler(w http.ResponseWriter, r *http.Request) {
 func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	err := srv.HandleTokenRequest(w, r)
 	if err != nil {
-		log.Println(err)
+		config.Info("get access token fail", "error", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
@@ -187,7 +187,7 @@ func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	// 获取 access token
 	access_token, ok := srv.BearerAuth(r)
 	if !ok {
-		log.Println("Failed to get access token from request")
+		config.Info("Failed to get access token from request")
 		return
 	}
 
@@ -198,7 +198,7 @@ func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	// 从 access token 中获取 信息
 	token_info, err := srv.Manager.LoadAccessToken(ctx, access_token)
 	if err != nil {
-		log.Println(err)
+		config.Info("load access token fail", "error", err)
 		return
 	}
 
@@ -210,7 +210,7 @@ func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 根据 grant scope 决定获取哪些用户信息
 	if grant_scope != "read_user_info" {
-		log.Println("invalid grant scope")
+		config.Info(`invalid grant scope`)
 		w.Write([]byte("invalid grant scope"))
 		return
 	}
@@ -225,7 +225,7 @@ func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 func outputHTML(w http.ResponseWriter, req *http.Request, filename string) {
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Println(err)
+		config.Info("out put error", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
