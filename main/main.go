@@ -35,12 +35,12 @@ func main() {
 
 	errChan := make(chan error)
 	go func() {
-		config.Info("server start", "duration", time.Now().Sub(startTime))
+		config.Log.Info("server start", "duration", time.Now().Sub(startTime))
 		errChan <- http.ListenAndServe(":9000", nil)
 	}()
 	err := <-errChan
 	if err != nil {
-		config.Error("server stop")
+		config.Log.Error("server stop")
 	}
 
 }
