@@ -2,7 +2,7 @@ package test
 
 import (
 	"encoding/csv"
-	"flag"
+	"encoding/json"
 	"github.com/xuri/excelize/v2"
 	"oauth_demo/config"
 	"os"
@@ -44,6 +44,12 @@ func getExcelData(dir string) {
 	}
 }
 
+type recommendConfig struct {
+	GoodNum  string `json:"goodNum"`
+	PopText  string `json:"popText"`
+	Priority string `json:"priority"`
+}
+
 func copyExcelData(dir string) bool {
 	originFile, err := excelize.OpenFile(dir)
 	if err != nil {
@@ -69,29 +75,26 @@ func copyExcelData(dir string) bool {
 			return false
 		}
 		columnIndex := 0
+		m := make(map[string]recommendConfig, 1)
 		for rows.Next() {
+			columnIndex++
 			columns, err := rows.Columns()
 			if err != nil {
 				config.Log.Errorw("ERROR", err)
 				return false
 			}
-			if err != nil {
-				config.Log.Errorw("ERROR", err)
-				return false
+			if columnIndex < 3 {
+				continue
 			}
-			columnIndex++
-			name, err := excelize.CoordinatesToCellName(1, columnIndex)
-			if err != nil {
-				config.Log.Errorw("ERROR", err)
-				return false
-			}
-			err = newFile.SetSheetRow(sheetName, name, &columns)
-			if err != nil {
-				config.Log.Errorw("ERROR", "errMsg", err, "key", "行处理出错")
-				return false
-			}
+			m[columns[2]] = recommendConfig{columns[15], columns[14], columns[6]}
 		}
+		result, err := json.Marshal(m)
+		if err != nil {
+			return false
+		}
+		err = newFile.SetSheetRow(sheetName, "A1", &[]interface{}{string(result)})
 		newFile.SetActiveSheet(index)
+		break
 	}
 	err = newFile.DeleteSheet("sheet1")
 	if err != nil {
@@ -118,11 +121,5 @@ func copyExcelData(dir string) bool {
 }
 
 func TestExcel(t *testing.T) {
-	flag.Parse()
-	dir := flag.Args()
-	if len(dir) == 0 {
-		config.Log.Errorw("DirRequired", "DirRequired", "")
-		return
-	}
-	copyExcelData(dir[0])
+	copyExcelData("C:\\Users\\DELL\\Desktop\\宽带推荐优先级v.2.xlsx")
 }
