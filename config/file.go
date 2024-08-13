@@ -5,6 +5,7 @@ import (
 	"runtime"
 )
 
+// OpenFile 打开文件
 func OpenFile(filename string) error {
 	var cmd *exec.Cmd
 

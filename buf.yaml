@@ -1,0 +1,8 @@
+version: v1beta1
+name: buf.build/handsonic123123/oauth2
+build:
+  roots:
+    - proto
+lint:
+  use:
+    - DEFAULT

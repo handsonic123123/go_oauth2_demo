@@ -1,3 +1,5 @@
+// Package config 自定义日志库
+// 使用uber日志框架
 package config
 
 import (
@@ -14,6 +16,7 @@ func init() {
 	Log = logger.Sugar()
 }
 
+// 生成自定义日志
 func newCustomLogger() (*zap.Logger, error) {
 	os.Mkdir("./logs", os.ModePerm)
 	cfg := zap.Config{

@@ -10,8 +10,8 @@ import (
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/go-session/session"
+	"github.com/handsonic123123/go_oauth2_demo/config"
 	"net/http"
-	"oauth_demo/config"
 	"os"
 	"time"
 )

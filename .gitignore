@@ -1,2 +1,6 @@
 /logs/
 /.idea/
+/test/logs/
+/proto/log/*.pb.go
+/proto/log/*.gw.go
+/proto/log/*.json

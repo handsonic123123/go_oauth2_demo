@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package log;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/handsonic123123/go_oauth2_demo/proto;log";
+
+service LogEvent {
+  rpc LogQuery(LogQueryReq) returns (LogQueryResp){
+    option(google.api.http) = {
+      post:"/v1/log/query",
+      body:"*"
+    };
+  }
+}
+
+message LogQueryReq {
+  string id = 1;
+}
+
+message LogQueryResp {
+  string id = 1;
+  string name = 2;
+  string content = 3;
+}
+
